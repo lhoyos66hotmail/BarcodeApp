@@ -1,12 +1,12 @@
 import azure.functions as func
 import numpy as np
 import cv2
+from pyzbar import pyzbar
 from requests_toolbelt.multipart import decoder
 
 def decode_barcodes(img: np.ndarray) -> list[str]:
-    qr = cv2.QRCodeDetector()
-    data, points, _ = qr.detectAndDecode(img)
-    return [data] if data else []
+    barcodes = pyzbar.decode(img)
+    return [barcode.data.decode("utf-8") for barcode in barcodes]
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     try:
